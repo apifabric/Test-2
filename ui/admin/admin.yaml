@@ -1,0 +1,413 @@
+about:
+  date: October 18, 2024 03:48:35
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 16
+  number_tables: 13
+info_toggle_checked: true
+resources:
+  AccessLog:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: document_id
+      required: true
+    - name: user_id
+      required: true
+    - name: accessed_on
+    description: Tracks user access of documents.
+    info_list: Tracks user access of documents.
+    tab_groups:
+    - direction: toone
+      fks:
+      - document_id
+      name: document
+      resource: Document
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: AccessLog
+    user_key: id
+  Annotation:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: created_by
+      required: true
+    - name: scan_id
+      required: true
+    - name: content
+      required: true
+    - name: created_on
+    description: Supports annotations made on document scans.
+    info_list: Supports annotations made on document scans.
+    tab_groups:
+    - direction: toone
+      fks:
+      - created_by
+      name: user
+      resource: User
+    - direction: toone
+      fks:
+      - scan_id
+      name: scan
+      resource: Scan
+    type: Annotation
+    user_key: id
+  Approval:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: approved_by
+    - name: document_id
+      required: true
+    - name: status
+      required: true
+    - name: approved_on
+    description: Stores approval status for documents.
+    info_list: Stores approval status for documents.
+    tab_groups:
+    - direction: toone
+      fks:
+      - approved_by
+      name: user
+      resource: User
+    - direction: toone
+      fks:
+      - document_id
+      name: document
+      resource: Document
+    type: Approval
+    user_key: id
+  Comment:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: created_by
+      required: true
+    - name: editable_version_id
+      required: true
+    - name: content
+      required: true
+    - name: created_on
+    description: Stores comments made on editable versions of documents.
+    info_list: Stores comments made on editable versions of documents.
+    tab_groups:
+    - direction: toone
+      fks:
+      - created_by
+      name: user
+      resource: User
+    - direction: toone
+      fks:
+      - editable_version_id
+      name: editable_version
+      resource: EditableVersion
+    type: Comment
+    user_key: id
+  Document:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: created_by
+      required: true
+    - name: title
+      required: true
+    - name: uploaded_on
+    - name: id
+    description: Stores metadata about uploaded scanned documents.
+    info_list: Stores metadata about uploaded scanned documents.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - document_id
+      name: AccessLogList
+      resource: AccessLog
+    - direction: tomany
+      fks:
+      - document_id
+      name: ApprovalList
+      resource: Approval
+    - direction: tomany
+      fks:
+      - document_id
+      name: DocumentTagList
+      resource: DocumentTag
+    - direction: tomany
+      fks:
+      - document_id
+      name: EditableVersionList
+      resource: EditableVersion
+    - direction: tomany
+      fks:
+      - document_id
+      name: ScanList
+      resource: Scan
+    - direction: toone
+      fks:
+      - created_by
+      name: user
+      resource: User
+    type: Document
+    user_key: description
+  DocumentTag:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: document_id
+      required: true
+    - name: tag_id
+      required: true
+    description: Junction table for many-to-many relationship between documents and
+      tags.
+    info_list: Junction table for many-to-many relationship between documents and
+      tags.
+    tab_groups:
+    - direction: toone
+      fks:
+      - document_id
+      name: document
+      resource: Document
+    - direction: toone
+      fks:
+      - tag_id
+      name: tag
+      resource: Tag
+    type: DocumentTag
+    user_key: id
+  EditableVersion:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: document_id
+      required: true
+    - name: content
+      required: true
+    - name: version_number
+    - name: last_edited_on
+    description: Stores editable text versions of the scanned documents.
+    info_list: Stores editable text versions of the scanned documents.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - editable_version_id
+      name: CommentList
+      resource: Comment
+    - direction: tomany
+      fks:
+      - editable_version_id
+      name: HistoryList
+      resource: History
+    - direction: toone
+      fks:
+      - document_id
+      name: document
+      resource: Document
+    type: EditableVersion
+    user_key: id
+  History:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: editable_version_id
+      required: true
+    - name: change_summary
+    - name: timestamp
+    description: Tracks changes made to editable versions.
+    info_list: Tracks changes made to editable versions.
+    tab_groups:
+    - direction: toone
+      fks:
+      - editable_version_id
+      name: editable_version
+      resource: EditableVersion
+    type: History
+    user_key: id
+  Role:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: description
+    - name: id
+    description: Defines user roles within the application.
+    info_list: Defines user roles within the application.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - role_id
+      name: UserRoleList
+      resource: UserRole
+    type: Role
+    user_key: name
+  Scan:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: document_id
+      required: true
+    - name: image_path
+      required: true
+    - name: page_number
+      required: true
+    description: Stores the scan images of documents.
+    info_list: Stores the scan images of documents.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - scan_id
+      name: AnnotationList
+      resource: Annotation
+    - direction: toone
+      fks:
+      - document_id
+      name: document
+      resource: Document
+    type: Scan
+    user_key: id
+  Tag:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: id
+    description: Stores tags for categorizing documents.
+    info_list: Stores tags for categorizing documents.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - tag_id
+      name: DocumentTagList
+      resource: DocumentTag
+    type: Tag
+    user_key: name
+  User:
+    attributes:
+    - label: ' username*'
+      name: username
+      required: true
+      search: true
+      sort: true
+    - name: email
+      required: true
+    - name: password_hash
+      required: true
+    - name: created_on
+    - name: id
+    description: Stores information about users who access the application.
+    info_list: Stores information about users who access the application.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - user_id
+      name: AccessLogList
+      resource: AccessLog
+    - direction: tomany
+      fks:
+      - created_by
+      name: AnnotationList
+      resource: Annotation
+    - direction: tomany
+      fks:
+      - approved_by
+      name: ApprovalList
+      resource: Approval
+    - direction: tomany
+      fks:
+      - created_by
+      name: CommentList
+      resource: Comment
+    - direction: tomany
+      fks:
+      - created_by
+      name: DocumentList
+      resource: Document
+    - direction: tomany
+      fks:
+      - user_id
+      name: UserRoleList
+      resource: UserRole
+    type: User
+    user_key: username
+  UserRole:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: role_id
+      required: true
+    - name: user_id
+      required: true
+    description: Junction table for many-to-many relationship between users and roles.
+    info_list: Junction table for many-to-many relationship between users and roles.
+    tab_groups:
+    - direction: toone
+      fks:
+      - role_id
+      name: role
+      resource: Role
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: UserRole
+    user_key: id
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

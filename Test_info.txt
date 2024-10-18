@@ -1,0 +1,1 @@
+A webapp that shows a picture of a document scan and it's editable version side by side 

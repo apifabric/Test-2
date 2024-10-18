@@ -1,0 +1,114 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+
+Table AccessLog {
+    id INTEGER [primary key]
+    user_id INTEGER 
+    document_id INTEGER 
+    accessed_on DATETIME 
+    }
+
+Table Document {
+    id INTEGER [primary key]
+    title VARCHAR 
+    description TEXT 
+    created_by INTEGER 
+    uploaded_on DATETIME 
+    }
+
+Table User {
+    id INTEGER [primary key]
+    username VARCHAR 
+    email VARCHAR 
+    password_hash VARCHAR 
+    created_on DATETIME 
+    }
+
+Table Annotation {
+    id INTEGER [primary key]
+    scan_id INTEGER 
+    content TEXT 
+    created_by INTEGER 
+    created_on DATETIME 
+    }
+
+Table Scan {
+    id INTEGER [primary key]
+    document_id INTEGER 
+    image_path VARCHAR 
+    page_number INTEGER 
+    }
+
+Table Approval {
+    id INTEGER [primary key]
+    document_id INTEGER 
+    approved_by INTEGER 
+    status VARCHAR 
+    approved_on DATETIME 
+    }
+
+Table Comment {
+    id INTEGER [primary key]
+    editable_version_id INTEGER 
+    content TEXT 
+    created_by INTEGER 
+    created_on DATETIME 
+    }
+
+Table EditableVersion {
+    id INTEGER [primary key]
+    document_id INTEGER 
+    content TEXT 
+    version_number INTEGER 
+    last_edited_on DATETIME 
+    }
+
+Table DocumentTag {
+    id INTEGER [primary key]
+    document_id INTEGER 
+    tag_id INTEGER 
+    }
+
+Table Tag {
+    id INTEGER [primary key]
+    name VARCHAR 
+    }
+
+Table History {
+    id INTEGER [primary key]
+    editable_version_id INTEGER 
+    change_summary TEXT 
+    timestamp DATETIME 
+    }
+
+Table Role {
+    id INTEGER [primary key]
+    name VARCHAR 
+    description TEXT 
+    }
+
+Table UserRole {
+    id INTEGER [primary key]
+    user_id INTEGER 
+    role_id INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: AccessLog.(document_id) < Document.(id)
+    Ref: AccessLog.(user_id) < User.(id)
+    Ref: Document.(created_by) < User.(id)
+    Ref: Annotation.(created_by) < User.(id)
+    Ref: Annotation.(scan_id) < Scan.(id)
+    Ref: Scan.(document_id) < Document.(id)
+    Ref: Approval.(approved_by) < User.(id)
+    Ref: Approval.(document_id) < Document.(id)
+    Ref: Comment.(created_by) < User.(id)
+    Ref: Comment.(editable_version_id) < EditableVersion.(id)
+    Ref: EditableVersion.(document_id) < Document.(id)
+    Ref: DocumentTag.(document_id) < Document.(id)
+    Ref: DocumentTag.(tag_id) < Tag.(id)
+    Ref: History.(editable_version_id) < EditableVersion.(id)
+    Ref: UserRole.(role_id) < Role.(id)
+    Ref: UserRole.(user_id) < User.(id)
